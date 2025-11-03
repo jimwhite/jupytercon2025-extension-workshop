@@ -1,0 +1,4 @@
+mamba activate jupytercon2025
+jlpm build
+jlpm watch
+jupyter lab
