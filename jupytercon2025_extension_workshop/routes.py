@@ -34,7 +34,18 @@ class HelloRouteHandler(APIHandler):
 class ImageAndCaptionRouteHandler(APIHandler):
     @tornado.web.authenticated
     def get(self):
-        random_selection = random.choice(IMAGES_AND_CAPTIONS)
+        # Get the current_id parameter if provided
+        current_id = self.get_argument('current_id', None)
+        
+        # Filter out the current image if specified
+        available_images = IMAGES_AND_CAPTIONS
+        if current_id is not None:
+            available_images = [img for img in IMAGES_AND_CAPTIONS if img["filename"] != current_id]
+            # If no other images available, use all images
+            if not available_images:
+                available_images = IMAGES_AND_CAPTIONS
+        
+        random_selection = random.choice(available_images)
 
         # Read the data and encode the bytes in base64
         with open(IMAGES_DIR / random_selection["filename"], "rb") as f:
@@ -45,6 +56,7 @@ class ImageAndCaptionRouteHandler(APIHandler):
                 {
                     "b64_bytes": b64_bytes,
                     "caption": random_selection["caption"],
+                    "filename": random_selection["filename"],  # Include filename in response
                 }
             )
         )

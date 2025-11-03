@@ -1,7 +1,7 @@
 import { Widget } from '@lumino/widgets';
-import { MainAreaWidget } from '@jupyterlab/apputils';
+import { MainAreaWidget, ToolbarButton } from '@jupyterlab/apputils';
 import {
-  imageIcon,
+  imageIcon, refreshIcon
 } from '@jupyterlab/ui-components';
 import { requestAPI } from './request';
 
@@ -34,6 +34,9 @@ class ImageCaptionWidget extends Widget {
     this.caption = document.createElement('p');
     center.appendChild(this.caption);
 
+    // Track the current image filename
+    this.currentImageId = null;
+
     // Initialize the image from the server extension
     this.load_image();
   }
@@ -41,11 +44,19 @@ class ImageCaptionWidget extends Widget {
   // Fetch data from the server extension and save the results to img and
   // caption class attributes
   load_image(): void {
-    requestAPI<any>('random-image-caption')
+    // Build the URL with current image ID parameter if we have one
+    let endpoint = 'random-image-caption';
+    if (this.currentImageId) {
+      endpoint += `?current_id=${encodeURIComponent(this.currentImageId)}`;
+    }
+
+    requestAPI<any>(endpoint)
       .then(data => {
         console.log(data);
         this.img.src = `data:image/jpeg;base64, ${data.b64_bytes}`;
         this.caption.innerHTML = data.caption;
+        // Store the new image ID for future requests
+        this.currentImageId = data.filename;
       })
       .catch(reason => {
         console.error(`Error fetching image data.\n${reason}`);
@@ -55,6 +66,7 @@ class ImageCaptionWidget extends Widget {
   // Information about class attributes for the type checker
   img: HTMLImageElement;
   caption: HTMLParagraphElement;
+  currentImageId: string | null;
 }
 
 export class ImageCaptionMainAreaWidget extends MainAreaWidget<ImageCaptionWidget> {
@@ -65,5 +77,15 @@ export class ImageCaptionMainAreaWidget extends MainAreaWidget<ImageCaptionWidge
     this.title.label = "Jim's image with caption";
     this.title.caption = this.title.label;
     this.title.icon = imageIcon;
+
+    // Add a refresh button to the toolbar
+    const refreshButton = new ToolbarButton({
+      icon: refreshIcon,
+      tooltip: 'Refresh image',
+      onClick: () => {
+        widget.load_image();
+      }
+    });
+    this.toolbar.addItem('refresh', refreshButton);
   }
 }
