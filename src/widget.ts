@@ -5,14 +5,21 @@ import {
 } from '@jupyterlab/ui-components';
 
 class ImageCaptionWidget extends Widget {
+  // Static counter to track widget instances
+  private static instanceCount = 0;
+
   // Initialization
   constructor() {
     super();
 
+    // Increment the instance counter
+    ImageCaptionWidget.instanceCount++;
+
     // Create and append an HTML <p> (paragraph) tag to our widget's node in
     // the HTML document
     const hello = document.createElement('p');
-    hello.innerHTML = "Howdy Jim!";
+    const timestamp = new Date().toLocaleTimeString();
+    hello.innerHTML = `Howdy Jim! Widget #${ImageCaptionWidget.instanceCount} created at ${timestamp}`;
     this.node.appendChild(hello);
   }
 }
