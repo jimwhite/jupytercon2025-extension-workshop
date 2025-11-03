@@ -2,3 +2,7 @@ mamba activate jupytercon2025
 jlpm build
 jlpm watch
 jupyter lab
+
+# Instructions for optional launcher step missed the activation config of launch
+jlpm add @jupyterlab/launcher
+
