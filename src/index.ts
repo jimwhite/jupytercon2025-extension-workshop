@@ -5,6 +5,7 @@ import {
 import { ICommandPalette } from'@jupyterlab/apputils';
 import { requestAPI } from './request';
 import { ImageCaptionMainAreaWidget } from './widget';
+import { imageIcon } from '@jupyterlab/ui-components';
 import { ILauncher } from '@jupyterlab/launcher'
 
 /**
@@ -45,7 +46,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
         app.shell.add(widget, 'main');
         return widget;
       },
-      label: 'View an image & caption by Jim'
+      label: 'View an image & caption by JimX',
+      icon: imageIcon
     });
     palette.addItem({ command: command_id, category: 'Tutorial' });
     launcher.add({ command: command_id });
