@@ -13,7 +13,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
   description: 'A JupyterLab extension that displays a random image and caption.',
   autoStart: true,
   activate: (app: JupyterFrontEnd) => {
-    console.log('JupyterLab extension jupytercon2025-extension-workshop is activated!');
+    console.log('NEW, IMPROVED! JupyterLab extension jupytercon2025-extension-workshop is activated!');
 
     requestAPI<any>('hello')
       .then(data => {
